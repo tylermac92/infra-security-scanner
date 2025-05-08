@@ -26,13 +26,13 @@ jobs:
 
       - name: Build Image
         run: |
-          IMAGE_NAME=vuln-${{ matrix.image##*/ }}-app
+          IMAGE_NAME=vuln-${{ matrix.image.split('/')[1] }}-app
           docker build -t $IMAGE_NAME ./${{ matrix.image }}
 
       - name: Run Trivy Scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: vuln-${{ matrix.image##*/ }}-app
+          image-ref: vuln-${{ matrix.image.split('/')[1] }}-app
           scan-type: image
           format: table
           exit-code: 0
