@@ -1,42 +1,42 @@
 name: Container Image Scanning
 
 on:
-    push:
-        paths:
-            - 'docker/**'
-    pull_request:
-        paths:
-            - 'docker/**'
+  push:
+    paths:
+      - 'docker/**'
+  pull_request:
+    paths:
+      - 'docker/**'
 
 jobs:
-    scan-containers:
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                image:
-                    - docker/node
-                    - docker/python
-                    - docker/go
-        steps:
-            - name: checkout code
-              uses: actions/checkout@v3
+  scan-containers:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image:
+          - docker/node
+          - docker/python
+          - docker/go
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-            - name: Set up docker
-              uses: docker/setup-buildx-action@v3
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
 
-            - name: Build image
-              run: |
-                IMAGE_NAME=vuln-${{ matrix.image##*/ }}-app
-                docker build -t $IMAGE_NAME ./${{ matrix.image }}
+      - name: Build Image
+        run: |
+          IMAGE_NAME=vuln-${{ matrix.image##*/ }}-app
+          docker build -t $IMAGE_NAME ./${{ matrix.image }}
 
-            - name: Run Trivy scan
-              uses: aquasecurity/trivy-action@master
-              with:
-                image-ref: vuln-${{ matrix.image##*/ }}-app
-                scan-type: image
-                format: table
-                exit-code: 0
-                ignore-unfixed: true
-                vuln-type: "os,library"
-                severity: "CRITICAL,HIGH,MEDIUM"
-                scanners: "vuln,secret,config,license"
+      - name: Run Trivy Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: vuln-${{ matrix.image##*/ }}-app
+          scan-type: image
+          format: table
+          exit-code: 0
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH,MEDIUM"
+          scanners: "vuln,secret,config,license"
