@@ -1,0 +1,26 @@
+name: Kubernetes Manifest Scanning
+
+on:
+  push:
+    paths:
+      - 'kubernetes/**'
+  pull_request:
+    paths:
+      - 'kubernetes/**'
+
+jobs:
+  kube-linter:
+    name: KubeLinter Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install kube-linter
+        run: |
+          curl -s https://raw.githubusercontent.com/stackrox/kube-linter/main/install.sh | bash
+          sudo mv kube-linter /usr/local/bin/
+
+      - name: Run kube-linter
+        run: kube-linter lint ./kubernetes || true

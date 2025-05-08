@@ -20,7 +20,7 @@ spec:
           image: nginx:1.21
           ports:
             - containerPort: 80
-          # 🚩 Intentionally insecure config for demo
+          # 🚩 Intentionally insecure config for demos
           securityContext:
             privileged: true
           resources:
